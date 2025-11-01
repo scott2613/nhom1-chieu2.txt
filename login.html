@@ -114,6 +114,23 @@
 			background-color: #0056b3;
 			border-color: #004085;
 		}
+		
+		.quick-login {
+			margin-top: 20px;
+			padding: 15px;
+			background-color: #f8f9fa;
+			border-radius: 8px;
+			text-align: center;
+		}
+		
+		.quick-login p {
+			margin-bottom: 10px;
+			color: #666;
+		}
+		
+		.quick-login .btn {
+			margin: 5px;
+		}
 	</style>
 
 </head>
@@ -159,7 +176,7 @@
 										<li><a href="login.html">Đăng Nhập</a></li>
 										<li><a href="register.html">Đăng Ký</a></li>
 										<li><a href="profile.html">Profile</a></li> <br/>
-										<li><a href="login.html">Đăng Xuất</a></li>
+										<li><a href="#" id="logoutBtn">Đăng Xuất</a></li>
 									</ul>
 								</li>
 							</ul>
@@ -212,16 +229,16 @@
 						<div class="row justify-content-center">
 							<div class="col-md-6">
 								<h2 class="text-center mb-4">Đăng Nhập</h2>
-								<form method="POST" action="login-action.php" class="colorlib-form">
+								<form method="POST" class="colorlib-form" id="loginForm">
 									<div class="form-group">
 										<label for="email">Email</label>
 										<input type="email" id="email" class="form-control" name="email"
-											placeholder="Nhập Email của bạn" required>
+											placeholder="Nhập Email của bạn">
 									</div>
 									<div class="form-group">
 										<label for="password">Mật khẩu</label>
 										<input type="password" id="password" class="form-control" name="password"
-											placeholder="Nhập mật khẩu" required>
+											placeholder="Nhập mật khẩu">
 									</div>
 									<div class="form-group text-center">
 										<button type="submit" class="btn btn-primary">Đăng Nhập</button>
@@ -231,6 +248,13 @@
 										<span>Chưa có tài khoản? <a href="register.html">Đăng ký</a></span>
 									</div>
 								</form>
+								
+								<!-- Thêm phần đăng nhập nhanh -->
+								<div class="quick-login">
+									<p>Hoặc đăng nhập nhanh:</p>
+									<button class="btn btn-success" id="quickLoginBtn">Đăng nhập không cần nhập thông tin</button>
+									<button class="btn btn-info" id="quickRegisterBtn">Đăng ký và đăng nhập ngay</button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -344,6 +368,108 @@
 	<script src="js/jquery.stellar.min.js"></script>
 	<!-- Main -->
 	<script src="js/main.js"></script>
+
+	<script>
+		// JavaScript để xử lý đăng nhập/đăng ký không cần nhập thông tin
+		document.addEventListener('DOMContentLoaded', function() {
+			const loginForm = document.getElementById('loginForm');
+			const quickLoginBtn = document.getElementById('quickLoginBtn');
+			const quickRegisterBtn = document.getElementById('quickRegisterBtn');
+			const logoutBtn = document.getElementById('logoutBtn');
+			
+			// Kiểm tra xem người dùng đã đăng nhập chưa
+			function checkLoginStatus() {
+				return localStorage.getItem('isLoggedIn') === 'true';
+			}
+			
+			// Thiết lập trạng thái đăng nhập
+			function setLoginStatus(isLoggedIn, username) {
+				localStorage.setItem('isLoggedIn', isLoggedIn);
+				if (username) {
+					localStorage.setItem('username', username);
+				}
+			}
+			
+			// Chuyển hướng về trang chủ sau khi đăng nhập
+			function redirectToHome() {
+				window.location.href = 'index.html';
+			}
+			
+			// Xử lý đăng nhập nhanh
+			quickLoginBtn.addEventListener('click', function() {
+				// Tạo tài khoản mặc định
+				const randomId = Math.floor(Math.random() * 10000);
+				const defaultUsername = 'user' + randomId;
+				
+				// Lưu thông tin đăng nhập
+				setLoginStatus(true, defaultUsername);
+				
+				// Hiển thị thông báo
+				alert('Đăng nhập thành công! Tên đăng nhập của bạn là: ' + defaultUsername);
+				
+				// Chuyển hướng về trang chủ
+				redirectToHome();
+			});
+			
+			// Xử lý đăng ký và đăng nhập ngay
+			quickRegisterBtn.addEventListener('click', function() {
+				// Tạo tài khoản mặc định
+				const randomId = Math.floor(Math.random() * 10000);
+				const defaultUsername = 'user' + randomId;
+				
+				// Lưu thông tin đăng nhập
+				setLoginStatus(true, defaultUsername);
+				
+				// Hiển thị thông báo
+				alert('Đăng ký và đăng nhập thành công! Tên đăng nhập của bạn là: ' + defaultUsername);
+				
+				// Chuyển hướng về trang chủ
+				redirectToHome();
+			});
+			
+			// Xử lý đăng nhập thông thường (không cần kiểm tra thông tin)
+			loginForm.addEventListener('submit', function(e) {
+				e.preventDefault();
+				
+				// Lấy thông tin từ form (nếu có) hoặc tạo mặc định
+				let username = document.getElementById('email').value;
+				if (!username) {
+					const randomId = Math.floor(Math.random() * 10000);
+					username = 'user' + randomId;
+				}
+				
+				// Lưu thông tin đăng nhập
+				setLoginStatus(true, username);
+				
+				// Hiển thị thông báo
+				alert('Đăng nhập thành công! Tên đăng nhập của bạn là: ' + username);
+				
+				// Chuyển hướng về trang chủ
+				redirectToHome();
+			});
+			
+			// Xử lý đăng xuất
+			if (logoutBtn) {
+				logoutBtn.addEventListener('click', function(e) {
+					e.preventDefault();
+					
+					// Xóa thông tin đăng nhập
+					setLoginStatus(false);
+					
+					// Hiển thị thông báo
+					alert('Đã đăng xuất thành công!');
+					
+					// Chuyển hướng về trang đăng nhập
+					window.location.href = 'login.html';
+				});
+			}
+			
+			// Kiểm tra nếu đã đăng nhập thì chuyển hướng về trang chủ
+			if (checkLoginStatus() && window.location.pathname.includes('login.html')) {
+				redirectToHome();
+			}
+		});
+	</script>
 
 </body>
 
