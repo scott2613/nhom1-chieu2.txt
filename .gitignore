@@ -1,0 +1,10 @@
+.vscode/
+.sass-cache/
+node_modules/
+.venv/
+.env
+*.pyc
+__pycache__/
+build/
+dist/
+.DS_Store
